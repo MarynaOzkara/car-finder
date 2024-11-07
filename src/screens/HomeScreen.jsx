@@ -7,16 +7,51 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { colors, parameters } from "../global/styles";
 import { Icon } from "@rneui/base";
 import { StatusBar } from "expo-status-bar";
 import CarImage from "../../assets/uberCar.png";
 import { filterData } from "../global/data";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { mapStyle } from "../global/mapStyle";
+import * as Location from "expo-location";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const HomeScreen = () => {
+  const [latlng, setLatLng] = useState({});
+  const _map = useRef(1);
+  const checkPermission = async () => {
+    const hasPermission = await Location.requestForegroundPermissionsAsync();
+    if (hasPermission.status === "granted") {
+      const permission = await askPermission();
+      return permission;
+    }
+    return true;
+  };
+  const askPermission = async () => {
+    const permition = Location.requestForegroundPermissionsAsync();
+    return permition.status === "granted";
+  };
+  const getLocation = async () => {
+    try {
+      const { granted } = await Location.requestForegroundPermissionsAsync();
+      if (!granted) {
+        return;
+      }
+      const {
+        coords: { latitude, longitude },
+      } = await Location.getCurrentPositionAsync();
+      setLatLng({ latitude: latitude, longitude: longitude });
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    checkPermission();
+    getLocation();
+    console.log(latlng);
+  }, []);
   return (
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="#2058c0" translucent={true} />
@@ -141,6 +176,16 @@ const HomeScreen = () => {
           </View>
         </View>
         <Text style={styles.text4}>Around you</Text>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <MapView
+            ref={_map}
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            customMapStyle={mapStyle}
+            showsUserLocation={true}
+            followsUserLocation={true}
+          ></MapView>
+        </View>
       </ScrollView>
     </View>
   );

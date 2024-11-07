@@ -11,13 +11,32 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(Car Finder) to use your location."
+        }
+      ]
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier":"com.carfinder",
+      "config":{
+        "googleMapsApiKey" :"AIzaSyDBChCOptsRLGhjUoFKqt9aNWJcGv2NLpU"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.carfinder",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDBChCOptsRLGhjUoFKqt9aNWJcGv2NLpU"
+        },
+        "permissions": ["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","FOREGROUND_SERVICE"]
       }
     },
     "web": {
